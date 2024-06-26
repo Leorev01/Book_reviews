@@ -26,6 +26,7 @@
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    text-align: center;
   }
   
   /* Modal Content/Box */
@@ -34,9 +35,26 @@
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-  }
+    width: fit-content;
+    max-width: 80%; /* Could be more or less, depending on screen size */
+    box-sizing: border-box;
+}
   
+  .reviewform{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+  }
+  .reviewform>.button{
+    align-self: center;
+    height: min-content;
+  }
+  .label{
+    display: flex;
+    flex-direction: column;
+  }
+
   /* The Close Button */
   .close {
     color: #aaa;
@@ -55,6 +73,7 @@
   .reviewbody{
     display: flex;
     flex-direction: row;
+    gap: 5px;
   }
   
   .info{
@@ -67,7 +86,8 @@
     display: block;
     width: 30%;
     margin: auto;
-    margin-top: 2%;
+    margin-top: 4%;
+    border-bottom: 1px solid black;
   }
   .buttons{
     display: flex;
@@ -86,4 +106,10 @@
     gap: 10px;
     margin-top: 20vh;
     margin-bottom: 30vh;
+  }
+
+  @media screen and (max-width: 1100px) {
+    .reviewform{
+        display:block;
+    }
   }

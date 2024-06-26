@@ -17,17 +17,25 @@
     <div id="myModal" class="modal">
         <div id="popup" class="modal-content">
             <h2>Add Review</h2>
-            <form action="/addReview" method="POST">
-                <label for="title">Title</label>
-                <input type="text" name="title" id="title" required>
-                <label for="description">Description</label>
-                <input type="text" name="description" id="description" required>
-                <label for="notes">Notes</label>
-                <input type="text" name="notes" id="notes">
-                <label for="isbn">ISBN</label>
-                <input type="text" name="isbn" id="image" required>
-                <input class="submit" type="submit" value="Submit">
-                <a class="close" href="#">Close</a>
+            <form action="/addReview" method="POST" class="reviewform">
+                <div class="label">
+                    <label for="title">Title</label>
+                    <textarea name="title" id="title" required></textarea>
+                </div>
+                <div class="label">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" required></textarea>
+                </div>
+                <div class="label">
+                    <label for="notes">Notes</label>
+                    <textarea name="notes" id="notes"></textarea>
+                </div>
+                <div class="label">
+                    <label for="isbn">ISBN</label>
+                    <input type="text" name="isbn" id="image" required>
+                </div class="label">
+                <input class="button submit" type="submit" value="Submit">
+                <a class="button close" href="#">Close</a>
             </form>
         </div>
     </div>

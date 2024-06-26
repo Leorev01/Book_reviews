@@ -25,6 +25,23 @@ app.use(bodyParser.urlencoded({extended: true}));
 //public file location
 app.use(express.static("public"));
 
+//function to sort reviews
+async function sortReviews(field, order){
+    try{
+        // Validate field and order
+        const validFields = ['id', 'date', 'title'];
+        const validOrders = ['asc', 'desc'];
+        if (!validFields.includes(field) || !validOrders.includes(order)) {
+            throw new Error('Invalid sorting parameters');
+        }
+        let reviews = await db.query(`SELECT * FROM reviews ORDER BY ${field} ${order.toUpperCase()}`);
+        return reviews;
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+
 //function to add review
 async function addReview(user_id,title,desc,notes, isbn, date, image){
     try{
@@ -117,7 +134,7 @@ async function getImage(isbn){
 
 //let user;
 
-//function to log in user
+//function to log in user still need to finish this part
 /*async function login(email, password){
     let passwordcheck = await db.query("SELECT password FROM users WHERE email = $1", 
         [email]
@@ -201,6 +218,21 @@ app.post("/addReview", async (req,res)=> {
     }
     catch(err){
         console.log("Unable to add review: "+err);
+    }
+})
+
+//order reviews
+app.post("/sort", async (req,res) => {
+    let field = req.body.field;
+    let order= req.body.order;
+    try{
+        let reviews = await sortReviews(field,order);
+        res.render("index.ejs", {
+            reviews: reviews.rows
+        });
+    }
+    catch(err){
+        console.log(err);
     }
 })
 
