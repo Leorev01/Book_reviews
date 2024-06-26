@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>review Notes</title>
+    <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+    <% if(locals.reviews) { %>
+        <% reviews.forEach(review => {%>
+            <div class="review">
+                <div class="reviewbody">
+                    <img src="<%= review.image %>" alt="Book Cover" />
+                    <div class="info">
+                        <a href="/review/<%= review.id %>"><h2><%= review.title %></h2></a>
+                        <p>ISBN: <%= review.isbn %></p>
+                        <p>Date Added: <%= review.date.toDateString().slice(4) %></p>
+                    </div>
+                </div>
+                <p><%= review.description %></p>
+                <a href="/reviews/<%= review.id %>"><p><strong>Read notes</strong></a> or go to <a href="https://www.amazon.co.uk/s?k=<%=review.isbn%>&linkCode=gs3&tag=sivers0d-21">amazon page</p></a>
+            </div>
+            
+        <% }); %>
+    <% } %>
+
+</body>
+</html>

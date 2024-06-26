@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header</title>
+    <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+    <div class="header">
+        <a class="image" href="/"><img class="image" src="/images/Book.png"></a>
+        <h1>Book Notes</h1>
+        <a class="image" id="modalButton" href ="#popup" name="modal"><img class="image" src="/images/plus.png"></a>
+        <a class="image" href ="/login"><img class="image profile" src="/images/profile.png" alt="profile image"></a>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div id="popup" class="modal-content">
+            <h2>Add Review</h2>
+            <form action="/addReview" method="POST">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title" required>
+                <label for="description">Description</label>
+                <input type="text" name="description" id="description" required>
+                <label for="notes">Notes</label>
+                <input type="text" name="notes" id="notes">
+                <label for="isbn">ISBN</label>
+                <input type="text" name="isbn" id="image" required>
+                <input class="submit" type="submit" value="Submit">
+                <a class="close" href="#">Close</a>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("modalButton");
+
+        // Get the <span> element that closes the modal
+        var cancel = document.getElementsByClassName("close")[0];
+
+        //get the submit button
+        var submit = document.getElementsByClassName("submit")[0];
+
+        // When the user clicks on the button, open the modal
+        btn.onclick = function() {
+        modal.style.display = "block";
+        }
+
+        // When the user clicks on cancel, close the modal
+        cancel.onclick = function() {
+        modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+        if (event.target == window) {
+            window.style.display = "none";
+        }
+        }
+    </script>
+</body>
+</html>

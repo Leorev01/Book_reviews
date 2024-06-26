@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= review.title %></title>
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+    <h1><%= review.title %></h1>
+    <img src="<%= review.image %>" alt="Book Cover" />
+    <p><%= review.description %></p>
+    <p>ISBN: <%= review.isbn %></p>
+    <p>Notes: <%= review.notes %></p>
+    <div class="buttons">
+        <a href="/"><button>Back</button></a>
+        <button id="editButton">Edit</button>
+        <form method="post" action="/delete/<%= review.id %>"><button>Delete</button></form>
+    </div>
+    <% if(locals.error) {%>
+        <p class="errorlbl"><%=error%></p>
+     <% } %>
+    
+     <div id="editModal" class="modal">
+        <div id="popup" class="modal-content">
+            <form method="POST" action="/edit/<%= review.id %>">
+                <h2>Edit Review</h2>
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title" value="<%= review.title %>" required>
+                <label for="description">Description</label>
+                <textarea name="description" id="description"required><%= review.description %></textarea>
+                <label for="notes">Notes</label>
+                <textarea name="notes" id="notes"> <%= review.notes%></textarea>
+                <label for="isbn">ISBN</label>
+                <input type="text" name="isbn" id="image" value="<%= review.isbn %>" required>
+                <button type ="button" id="cancel">Cancel</button>
+                <button type="submit">Confirm</button>
+            </form>
+        </div>
+     </div>
+
+     <script>
+        var editmodal = document.getElementById("editModal");
+        var button = document.getElementById("editButton");
+        var cancel = document.getElementById("cancel");
+
+        button.onclick = function() {
+            editmodal.style.display = "block";
+        }
+
+        cancel.onclick = function() {
+            editmodal.style.display = "none";
+        }
+     </script>
+</body>
+</html>
