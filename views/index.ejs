@@ -7,22 +7,29 @@
     <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
+    <!-- Header -->
     <%- include("partials/header.ejs") %>
+    <!-- Form for sorting-->
     <h3>Order By:</h3>
     <form id="sortform" action="/sort" method="POST">
+        <!-- Sort by field-->
         <select name="field" id="field">
             <option value="" disabled selected hidden>Field</option>
             <option value="id">ID</option>
             <option value="date">Date</option>
             <option value="title">Title</option>
         </select>
+        <!-- Sort order-->
         <select name="order" id="order">
             <option value="" disabled selected hidden>Order</option>
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
         </select>
+        <!-- Sort button-->
         <button id="sort">Sort</button>
     </form>
+
+    <!-- All reviews -->
     <div class="reviews">
         <% if(locals.reviews) { %>
             <% reviews.forEach(review => {%>
@@ -42,6 +49,8 @@
             <% }); %>
         <% } %>
     </div>
+
+    <!-- Script for sorting -->
     <script>
         document.getElementById('sortform').addEventListener('submit', function(event) {
             const field = document.getElementById('field').value;

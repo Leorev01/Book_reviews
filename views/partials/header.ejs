@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
+    <!-- Header-->
     <div class="header">
         <a class="image" href="/"><img class="image" src="/images/Book.png"></a>
         <h1>Book Notes</h1>
@@ -14,9 +15,12 @@
         <a class="image" href ="/login"><img class="image profile" src="/images/profile.png" alt="profile image"></a>
     </div>
 
+    <!--Modal for adding a new review-->
     <div id="myModal" class="modal">
         <div id="popup" class="modal-content">
+            <!--Modal haeding-->
             <h2>Add Review</h2>
+            <!-- Form for review info -->
             <form action="/addReview" method="POST" class="reviewform">
                 <div class="label">
                     <label for="title">Title</label>
@@ -39,6 +43,8 @@
             </form>
         </div>
     </div>
+
+    <!-- Script for opening the modal -->
     <script>
         // Get the modal
         var modal = document.getElementById("myModal");

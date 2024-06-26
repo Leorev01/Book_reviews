@@ -6,7 +6,10 @@
     <title><%= review.title %></title>
 </head>
 <body>
+    <!-- Header-->
     <%- include("partials/header.ejs") %>
+
+    <!-- Review info-->
     <h1><%= review.title %></h1>
     <img src="<%= review.image %>" alt="Book Cover" />
     <p><%= review.description %></p>
@@ -17,13 +20,17 @@
         <button id="editButton">Edit</button>
         <form method="post" action="/delete/<%= review.id %>"><button>Delete</button></form>
     </div>
+    <!-- If error is passed to the view, display it-->
     <% if(locals.error) {%>
         <p class="errorlbl"><%=error%></p>
      <% } %>
     
+     <!-- Modal for editing a review-->
      <div id="editModal" class="modal">
         <div id="popup" class="modal-content">
+            <!--Modal haeding-->
             <h2>Edit Review</h2>
+            <!-- Form for review info -->
             <form method="POST" action="/edit/<%= review.id %>" class="reviewform">
                 <div class="label">
                     <label for="title">Title</label>
@@ -47,6 +54,7 @@
         </div>
      </div>
 
+     <!-- Script for opening the modal -->
      <script>
         var editmodal = document.getElementById("editModal");
         var button = document.getElementById("editButton");
