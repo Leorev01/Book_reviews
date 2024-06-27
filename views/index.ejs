@@ -30,20 +30,20 @@
     </form>
 
     <!-- All reviews -->
-    <div class="reviews">
+    <div class="review-container">
         <% if(locals.reviews) { %>
             <% reviews.forEach(review => {%>
                 <div class="review">
                     <div class="reviewbody">
                         <img src="<%= review.image %>" alt="Book Cover" />
                         <div class="info">
-                            <a href="/review/<%= review.id %>"><h2><%= review.title %></h2></a>
+                            <a class="review-title" href="/review/<%= review.id %>"><h2><%= review.title %></h2></a>
                             <p>ISBN: <%= review.isbn %></p>
                             <p>Date Added: <%= review.date.toDateString().slice(4) %></p>
                         </div>
                     </div>
                     <p><%= review.description %></p>
-                    <a href="/reviews/<%= review.id %>"><p><strong>Read notes</strong></a> or go to <a href="https://www.amazon.co.uk/s?k=<%=review.isbn%>&linkCode=gs3&tag=sivers0d-21">amazon page</p></a>
+                    <a href="/reviews/<%= review.id %>"><p class="text"><strong>Read notes</strong></a> or go to <a href="https://www.amazon.co.uk/s?k=<%=review.isbn%>&linkCode=gs3&tag=sivers0d-21">amazon page</p></a>
                 </div>
                 
             <% }); %>

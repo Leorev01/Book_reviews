@@ -1,18 +1,26 @@
+/* Header */
 .header{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
+    width: auto 100%;
     border-bottom: 1px solid black;
     text-align: center;
+    padding-bottom: 2vh;
 }
 .header h1{
-    margin-left: 40%;
-    margin-right: 40%;
+    flex: 1;
+    margin: 0;
+    text-align: center;
 }
 .image{
     width: 50px;
     height: 50px;
+    transition: transform 0.3s ;
+}
+.image:hover{
+    cursor: pointer;
+    transform: scale(1.05);
 }
 /* The Modal (background) */
 .modal {
@@ -46,6 +54,15 @@
     flex-direction: row;
     gap: 1em;
   }
+  .review-title{
+    color: black;
+    text-decoration: none;
+  }
+  .review-title:hover{
+    cursor: pointer;
+    color: blue;
+    transform: scale(1.05);
+  }
   .reviewform>.button{
     align-self: center;
     height: min-content;
@@ -53,6 +70,9 @@
   .label{
     display: flex;
     flex-direction: column;
+  }
+  .text>a{
+    color: blue;
   }
 
   /* The Close Button */
@@ -73,7 +93,10 @@
   .reviewbody{
     display: flex;
     flex-direction: row;
-    gap: 5px;
+    gap: 10px;
+  }
+  .reviewbody>img{
+    border: 2px solid black;
   }
   
   .info{
@@ -99,6 +122,7 @@
     resize: none;
   }
 
+  /* Login and register forms */
   #loginform, #registerform{
     display: flex;
     flex-direction: column;
