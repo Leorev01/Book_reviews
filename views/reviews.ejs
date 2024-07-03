@@ -15,11 +15,13 @@
     <p><%= review.description %></p>
     <p>ISBN: <%= review.isbn %></p>
     <p>Notes: <%= review.notes %></p>
-    <div class="buttons">
-        <a href="/"><button>Back</button></a>
-        <button id="editButton">Edit</button>
-        <form method="post" action="/delete/<%= review.id %>"><button>Delete</button></form>
-    </div>
+    <% if(locals.user.id == review.user_id) {%>
+        <div class="editButtons">
+            <a href="/"><button>Back</button></a>
+            <button id="editButton">Edit</button>
+            <form method="post" action="/delete/<%= review.id %>"><button>Delete</button></form>
+        </div>
+    <% } %>
     <!-- If error is passed to the view, display it-->
     <% if(locals.error) {%>
         <p class="errorlbl"><%=error%></p>

@@ -11,7 +11,9 @@
     <div class="header">
         <a class="image" href="/"><img class="image" src="/images/Book.png"></a>
         <h1>Book Notes</h1>
+        <% if(locals.user){%>
         <a class="image" id="modalButton" href ="#popup" name="modal"><img class="image" src="/images/plus.png"></a>
+        <% }%>
         <a class="image" href ="/login"><img class="image profile" src="/images/profile.png" alt="profile image"></a>
     </div>
 

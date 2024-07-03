@@ -199,7 +199,8 @@ async function getImage(isbn){
 app.get("/", async (req, res) => {
     let reviews = await getReviews();
     res.render("index.ejs", {
-        reviews: reviews.rows
+        reviews: reviews.rows,
+        user: req.user
     });
 })
 
@@ -209,7 +210,8 @@ app.get("/review/:id", async (req,res) => {
     let review = await getReview(id);
     res.render("reviews.ejs", {
         id:id,
-        review: review
+        review: review,
+        user: req.user
     });
 })
 

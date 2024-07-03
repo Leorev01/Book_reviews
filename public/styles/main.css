@@ -112,10 +112,11 @@
     margin-top: 4%;
     border-bottom: 1px solid black;
   }
-  .buttons{
+  .editButtons{
     display: flex;
     flex-direction: row;
     gap: 10px;
+    margin-top: 2%;
   }
   textarea{
     height: 10rem;
@@ -139,6 +140,10 @@
     align-items: center;
   }
   .buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 2%;
     margin-top: 2%;
   }
 
