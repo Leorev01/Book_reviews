@@ -132,6 +132,16 @@
     margin-bottom: 30vh;
   }
 
+  /*Profile page*/
+  .profileBody{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .buttons{
+    margin-top: 2%;
+  }
+
 
   /* Responsiveness for modals */
   @media screen and (max-width: 1100px) {

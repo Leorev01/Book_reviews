@@ -2,28 +2,47 @@ import express from "express";
 import axios from "axios";
 import bodyParser from "body-parser";
 import pg from "pg";
+import env from "dotenv";
+import session from "express-session";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import bcrypt from "bcrypt";
 
 //before running run node on terminal and install required packages
 
 const app = express();
 const port = 3000;
+const saltRounds = 5;
 
-//database details
-const db = new pg.Client({
-    user:"postgres",
-    host:"localhost",
-    database:"book",
-    password:"MynameisLeo123!",
-    port: 5432
-});
+//initialise env
+env.config();
 
-//connect to database
-db.connect();
-
+//create session
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+    })
+);
 app.use(bodyParser.urlencoded({extended: true}));
 
 //public file location
 app.use(express.static("public"));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+//database details
+const db = new pg.Client({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT
+});
+
+//connect to database
+db.connect();
 
 //function to sort reviews
 async function sortReviews(field, order){
@@ -88,12 +107,23 @@ async function getReviews(){
     }
 }
 
+//function to retrun review by id
 async function getReview(id){
     try{
         let result = await db.query(`SELECT * FROM reviews WHERE id = ${id}`);
         return result.rows[0];
     }catch(err){
         console.log(err);
+    }
+}
+
+//function to return reviews by user_id
+async function getUserReviews(user_id){
+    try{
+        const result = await db.query("SELECT * FROM reviews WHERE user_id = $1", [user_id]);
+        return result.rows;
+    }catch(err){
+        console.log("Unable to get user reviews");
     }
 }
 
@@ -119,6 +149,23 @@ async function deleteUser(id){
     }
 }
 
+//function to change password
+async function changePassword(email, password) {
+    try {
+      const hash = await bcrypt.hash(password, saltRounds);
+      const result = await db.query(
+        "UPDATE users SET password = $1 WHERE email = $2",
+        [hash, email]
+      );
+      // Handle successful update (optional: log success message)
+      return true;  // Indicate successful update (optional)
+    } catch (err) {
+      console.error("Error updating password:", err);
+      return false;  // Indicate error (optional)
+    }
+  }
+  
+//function to get book cover image
 async function getImage(isbn){
     try{
         /*const response = await axios.get(`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`);
@@ -169,7 +216,14 @@ app.get("/review/:id", async (req,res) => {
 //load login page
 app.get("/login", (req,res) => {
     //login('leo@gmail.com', 'leo');
-    res.render("login.ejs");
+    if(req.isAuthenticated()){
+        res.redirect("/profile");
+        console.log(req.user);
+    }
+    else{
+        res.render("login.ejs");
+    }
+
 })
 
 //load register page
@@ -177,48 +231,165 @@ app.get("/register", (req,res) => {
     res.render("register.ejs");
 })
 
+//load profile page
+app.get("/profile", async (req,res) => {
+    if(req.isAuthenticated()){
+        try{
+            console.log(req.user);
+            const reviews = await getUserReviews(req.user.id);
+            res.render("profile.ejs", {
+            user: req.user,
+            reviews: reviews
+            });
+        }catch(err){
+            console.log(err);
+        }
+    }else{
+        res.redirect("/login");
+    }
+
+})
+
 //add user
 app.post("/register", async (req,res) => {
     let name = req.body.name;
     let email = req.body.email;
     let password = req.body.password;
-    try{
-        await createUser(name, email, password);
-        res.redirect("/");
-    }
-    catch(err){
+    try {
+        const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [
+          email,
+        ]);
+    
+        if (checkResult.rows.length > 0) {
+          res.redirect("/login");
+        } else {
+          bcrypt.hash(password, saltRounds, async (err, hash) => {
+            if (err) {
+              console.error("Error hashing password:", err);
+            } else {
+              const result = await db.query(
+                "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
+                [name, email, hash]
+              );
+              const user = result.rows[0];
+              req.login(user, (err) => {
+                console.log("success");
+                console.log(req.user);
+                res.redirect("/profile");
+              });
+            }
+          });
+        }
+      } catch (err) {
         console.log(err);
+      }
+    
+})
+
+//user login 
+app.post("/login",
+    passport.authenticate("local", {
+      successRedirect: "/profile",
+      failureRedirect: "/login",
+    })
+)
+
+//user register 
+app.post("/logout", async (req, res) => {
+    req.logout(function(err){
+        if(err){console.log(err)}
+        res.redirect("/");
+    })
+})
+
+//user change password
+app.post("/changePassword", async (req, res) => {
+    if(req.isAuthenticated()){
+        const pas1 = req.body.password;
+        const pas2 = req.body.password2;
+        const email = req.user.email;
+        console.log(email);
+        console.log(pas1 + " " + pas2);
+        if(pas1 == pas2){
+        try{
+            await changePassword(email, pas1);
+            res.render("profile.ejs", {
+                user: req.user,
+                error: "Password changed succesfully"
+            })
+            }
+            catch(err){
+                console.log("Unable to change password");
+                res.render("profile.ejs", {
+                    user: req.user,
+                    error: "Unable to change password"
+                });
+            }
+        }
+        else{
+            console.log("Passwords do not match")
+            res.render("profile.ejs", {
+                user: req.user,
+                error: "Password not changed. Passwords do not match"
+            })
+        }
     }
+    else{
+        res.redirect("/login");
+    }  
+    
 })
 
-//login user
-app.post("/login", async (req,res) => {
-
+//delete user account
+app.post("/deleteAccount", async (req, res) => {
+    await deleteUser(req.user.id);
+    req.logout(function(err) {
+        if(err) {console.log(err)}
+    })
+    res.redirect("/");
+    
 })
+
+/*get user reviews
+app.post("/getUserReviews", async (req,res) => {
+    const reviews = await getUserReviews(req.user.id);
+    if(reviews.rowCount = 0){
+
+    }
+    else{
+        res.render()
+    }
+})*/
 
 //add review
 app.post("/addReview", async (req,res)=> {
-    try{
-        let notes;
-        if(req.body.notes){
-            notes = req.body.notes;
+    if(req.isAuthenticated()){
+        try{
+            let notes;
+            if(req.body.notes){
+                notes = req.body.notes;
+            }
+            else{
+                notes = "No notes";
+            }
+            //id placeholder
+            let id = req.user.id;
+            let title = req.body.title;
+            let desc = req.body.description;
+            let isbn = req.body.isbn;
+            let date = new Date(Date.now()).toDateString();
+            let image = await getImage(isbn);
+            await addReview(id,title,desc,notes, isbn, date, image);
+            res.redirect("/");
         }
-        else{
-            notes = "No notes";
+        catch(err){
+            console.log("Unable to add review: "+err);
         }
-        //id placeholder
-        let id = "1";
-        let title = req.body.title;
-        let desc = req.body.description;
-        let isbn = req.body.isbn;
-        let date = new Date(Date.now()).toDateString();
-        let image = await getImage(isbn);
-        await addReview(id,title,desc,notes, isbn, date, image);
-        res.redirect("/");
     }
-    catch(err){
-        console.log("Unable to add review: "+err);
+    else{
+        res.redirect("/login")
     }
+    
 })
 
 //order reviews
@@ -268,6 +439,49 @@ app.post("/edit/:id", async (req,res) => {
     catch(err){
         console.log(err);
     }
+})
+
+//authenticating session
+passport.use(
+    new Strategy({
+      usernameField: "email", // Set username field to 'email'
+      passwordField: "password",
+    }, async (email, password, cb) => {
+      try {
+        const result = await db.query("SELECT * FROM users WHERE email = $1", [
+          email,
+        ]);
+  
+        if (result.rows.length > 0) {
+          const user = result.rows[0];
+          bcrypt.compare(password, user.password, (err, valid) => {
+            if (err) {
+              console.error("Error comparing passwords:", err);
+              return cb(err);
+            } else {
+              if (valid) {
+                return cb(null, user);
+              } else {
+                return cb(null, false);
+              }
+            }
+          });
+        } else {
+          return cb(null, false); // User not found
+        }
+      } catch (err) {
+        return cb(err);
+      }
+    })
+  );
+  
+
+passport.serializeUser((user, cb) => {
+    cb(null, user);
+})
+
+passport.deserializeUser((user, cb) => {
+    cb(null, user);  
 })
 
 app.listen(port, ()=> {
